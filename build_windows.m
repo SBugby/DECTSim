@@ -3,7 +3,7 @@ function build_windows()
 %
 % Requirements:
 %   - Windows
-%   - MATLAB R2023b or newer
+%   - MATLAB R2026a or newer
 %   - MATLAB Compiler
 %   - Image Processing Toolbox
 
@@ -107,7 +107,11 @@ function build_windows()
             "Dual-energy computed tomography simulation application.", ...
         "OutputDir", installerOutput, ...
         "RuntimeDelivery", "web", ...
-        "AdditionalFiles", fullfile(rootDir, "LICENSE"), ...
+        "AdditionalFiles", [...
+                                fullfile(rootDir, "LICENSE")
+                                fullfile(rootDir, "NOTICE.txt")
+                                fullfile(rootDir, "APPLICATION_LICENSE.txt")
+                            ],
         "Verbose", "on");
 
     fprintf("\nDECTSim build completed successfully.\n");

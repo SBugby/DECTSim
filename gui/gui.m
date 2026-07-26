@@ -13,6 +13,7 @@ classdef gui < matlab.apps.AppBase
         ResetMenu                       matlab.ui.container.Menu
         HelpMenu                        matlab.ui.container.Menu
         DocumentationMenu               matlab.ui.container.Menu
+        AboutMenu                       matlab.ui.container.Menu
         TabGroup                        matlab.ui.container.TabGroup
         RunTab                          matlab.ui.container.Tab
         ImagePanel                      matlab.ui.container.Panel
@@ -736,7 +737,7 @@ classdef gui < matlab.apps.AppBase
 
         % Menu selected function: ReconstructionHelpMenu
         function ReconstructionHelpMenuSelected(~, ~)
-            doc iradon
+            % doc iradon
             web("https://dectsim.readthedocs.io/en/latest/user_guide/gui.html#reconstruction","-browser");
         end
 
@@ -921,6 +922,29 @@ classdef gui < matlab.apps.AppBase
             web("https://dectsim.readthedocs.io/en/latest/", "-browser");
         end
 
+        % Menu selected function: AboutMenu
+        function AboutMenuSelected(app, event)
+            message = sprintf([ ...
+                'DECTSim 1.0.0\n\n' ...
+                'Dual-energy computed tomography simulation application.\n\n' ...
+                'MATLAB®. © 1984 - 2026 The MathWorks, Inc.\n\n' ...
+                'This application was created using MATLAB Compiler and ' ...
+                'requires MATLAB Runtime.\n\n' ...
+                'DECTSim is distributed under the BSD 3-Clause License.\n' ...
+                'Copyright (c) 2023, Joshua Gray and Sofia Pearson.\n\n' ...
+                'See APPLICATION_LICENSE.txt,' ...
+                'for the applicable terms and notices.' ...
+            ]);
+
+            uialert( ...
+                app.UIFigure, ...
+                message, ...
+                'About DECTSim', ...
+                'Icon', 'info');
+            end
+        end
+
+
         % Menu selected function: SourceHelpMenu_run
         function SourceHelpMenu_runSelected(app, event)
             web("https://dectsim.readthedocs.io/en/latest/user_guide/gui.html#source","-browser");
@@ -944,20 +968,49 @@ classdef gui < matlab.apps.AppBase
 
         % Menu selected function: ReconstructionMenu_3, SinogramMenu_3
         function OpeninImageViewerMenuSelected(app, event)
-            show_sinogram = strcmp(event.Source.Text, 'Sinogram');
+
+            showSinogram = strcmp(event.Source.Text, "Sinogram");
+
             if isempty(app.recons{1})
-                errordlg('No sinogram to view', 'Invalid Sinogram');return;
+                uialert( ...
+                    app.UIFigure, ...
+                    "Run a simulation before opening an image.", ...
+                    "No Image Available");
+                return;
             end
+
+            if showSinogram
+                imageData = ...
+                    app.ShowDropDown.ItemsData{app.ShowDropDown.ValueIndex};
+                windowTitle = "DECTSim Sinogram";
+            else
+                imageData = app.recons{app.ShowDropDown.ValueIndex};
+                windowTitle = "DECTSim Reconstruction";
+            end
+
             try
-                if show_sinogram
-                    imageViewer(app.ShowDropDown.ItemsData{app.ShowDropDown.ValueIndex});
+                if isdeployed
+                    % imageViewer is unavailable in MATLAB Runtime.
+                    % Use a standard MATLAB figure instead.
+                    imageFigure = figure( ...
+                        "Name", windowTitle, ...
+                        "NumberTitle", "off");
+
+                    imageAxes = axes(imageFigure);
+
+                    imshow(imageData, ...
+                        "Parent", imageAxes, ...
+                        "InitialMagnification", "fit");
                 else
-                    imageViewer(app.recons{app.ShowDropDown.ValueIndex})
+                    % imageViewer is available in normal MATLAB.
+                    %#exclude imageViewer
+                    imageViewer(imageData);
                 end
             catch ME
-                % If there is an error opening the image viewer - tell the user the error and suggest they install the image processing toolbox
-                message = sprintf('Error opening the image viewer: %s\nIt is possible that the image processing toolbox is not installed. You can install it from the Add-Ons menu.', ME.message);
-                uialert(app.UIFigure, message, 'Error opening image viewer');
+                uialert( ...
+                    app.UIFigure, ...
+                    sprintf("The image could not be opened:\n\n%s", ME.message), ...
+                    "Image Display Error");
             end
         end
     end
@@ -1015,6 +1068,13 @@ classdef gui < matlab.apps.AppBase
             app.DocumentationMenu = uimenu(app.HelpMenu);
             app.DocumentationMenu.MenuSelectedFcn = createCallbackFcn(app, @DocumentationMenuSelected, true);
             app.DocumentationMenu.Text = 'Documentation';
+
+            % Create AboutMenu
+            app.AboutMenu = uimenu(app.HelpMenu);
+            app.AboutMenu.MenuSelectedFcn = ...
+                createCallbackFcn(app, @AboutMenuSelected, true);
+            app.AboutMenu.Separator = 'on';
+            app.AboutMenu.Text = 'About DECTSim';
 
             % Create TabGroup
             app.TabGroup = uitabgroup(app.UIFigure);
