@@ -115,8 +115,7 @@ function build_windows()
                                 fullfile(rootDir, "LICENSE")
                                 fullfile(rootDir, "NOTICE.txt")
                                 fullfile(rootDir, "APPLICATION_LICENSE.txt")
-                            ],
-        "Verbose", "on");
+                            ],"Verbose", "on");
 
     fprintf("\nDECTSim build completed successfully.\n");
     fprintf("Application output:\n  %s\n", applicationOutput);
