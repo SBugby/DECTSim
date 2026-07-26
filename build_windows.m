@@ -45,9 +45,13 @@ function build_windows()
 
     requiredDataNames = [
         "PhantomExample1.mat"
+        "PhantomExample1.png"
         "PhantomExample2.mat"
+        "PhantomExample1.png"
         "PhantomExample3.mat"
+        "PhantomExample1.png"
         "PhantomExample4.mat"
+        "PhantomExample1.png"
         "SourceExample40kvp.mat"
         "SourceExample80kvp.mat"
     ];

@@ -26,6 +26,7 @@ Welcome to DECTSim's documentation!
    dev_guide/detector.rst
    dev_guide/materials.rst
    dev_guide/voxel_shapes.rst
+   dev_guide/save_phantom_preview.rst
    dev_guide/voxel_array.rst
    dev_guide/ray_tracing.rst
    dev_guide/sensors.rst

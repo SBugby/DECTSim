@@ -55,6 +55,8 @@ phantom = voxel_array([0;0;0], zeros(3, 1)+2*phantom_scale, ...
 % Save the phantom
 save(fullfile(guiDir, "PhantomExample1.mat"), "phantom");
 
+save_phantom_preview(phantom, fullfile(guiDir, "PhantomExample1.png"));
+
 % Example 2!
 
 % Voxel array constants
@@ -80,6 +82,7 @@ phantom = voxel_array(vox_arr_center, [zeros(2, 1)+phantom_radius*2; phantom_wid
     voxel_size, {water_cylinder, bone_cylinder, fat_cylinder, blood_cylinder, muscle_cylinder});
 
 save(fullfile(guiDir, "PhantomExample2.mat"), "phantom");
+save_phantom_preview(phantom, fullfile(guiDir, "PhantomExample2.png"));
 
 % Example 3!
 % Voxel array constants
@@ -105,6 +108,7 @@ phantom = voxel_array(vox_arr_center, [zeros(2, 1)+phantom_radius*2; phantom_wid
     voxel_size, {water_cylinder, bone_cylinder, fat_cylinder, ti_cylinder, muscle_cylinder});
 
 save(fullfile(guiDir, "PhantomExample3.mat"), "phantom");
+save_phantom_preview(phantom, fullfile(guiDir, "PhantomExample3.png"));
 
 % Example 4!
 % Voxel array constants
@@ -123,6 +127,7 @@ phantom = voxel_array(vox_arr_center, [zeros(2, 1)+phantom_radius*2; phantom_wid
     voxel_size, {water_cylinder, bone_cylinder, fat_cylinder, ti_cylinder});
 
 save(fullfile(guiDir, "PhantomExample4.mat"), "phantom");
+save_phantom_preview(phantom, fullfile(guiDir, "PhantomExample4.png"));
 
 source_40kvp = source_fromfile(fullfile(guiDir, "40kvp.spk"));
 source_80kvp = source_fromfile(fullfile(guiDir, "80kvp.spk"));

@@ -127,6 +127,69 @@ classdef gui < matlab.apps.AppBase
     % Callbacks that handle component events
     methods (Access = private)
 
+% Update the phantom preview image
+% Update the phantom preview image
+function UpdatePhantomPreview(app)
+    pathToMLAPP = fileparts(mfilename("fullpath"));
+
+    % Default image used when no PNG preview is available.
+    defaultPreview = fullfile( ...
+        pathToMLAPP, ...
+        "graphics", ...
+        "SheppLogan_Phantom.svg");
+
+    previewPath = defaultPreview;
+
+    phantomIndex = app.PhantomListBox.ValueIndex;
+
+    if isempty(phantomIndex) || ...
+            phantomIndex > numel(app.phantom_files)
+        app.PhantomImage.ImageSource = previewPath;
+        return;
+    end
+
+    phantomFile = string( ...
+        app.phantom_files{phantomIndex});
+
+    % Built-in phantoms are stored as filenames. Custom phantoms are
+    % stored as absolute paths.
+    [phantomFolder, ~, ~] = fileparts(phantomFile);
+
+    if phantomFolder == ""
+        phantomFile = fullfile( ...
+            pathToMLAPP, ...
+            phantomFile);
+    end
+
+    [phantomFolder, phantomName, ~] = ...
+        fileparts(phantomFile);
+
+    % First look beside the MAT-file.
+    adjacentPreview = fullfile( ...
+        phantomFolder, ...
+        phantomName + ".png");
+
+    % Then look in the GUI graphics directory.
+    graphicsPreview = fullfile( ...
+        pathToMLAPP, ...
+        "graphics", ...
+        phantomName + ".png");
+
+    if isfile(adjacentPreview)
+        previewPath = adjacentPreview;
+    elseif isfile(graphicsPreview)
+        previewPath = graphicsPreview;
+    end
+
+    app.PhantomImage.ImageSource = previewPath;
+end
+
+
+% Value changed function: PhantomListBox
+function PhantomListBoxValueChanged(app, ~)
+    app.UpdatePhantomPreview();
+end
+
         % Image clicked function: RaysImage, SourceImage
         function ToggleSourcePanelVisibility(app, ~)
             if strcmp(app.SourcePanel.Visible, 'off')
@@ -288,7 +351,7 @@ classdef gui < matlab.apps.AppBase
                 interpolation = app.InterpolationDropDown.Value;
 
                 % Source 1
-                sinogram = squeeze(compute_sinogram(source1, phantom, d, scatter_type, scatter_factor));       
+                sinogram = squeeze(compute_sinogram(source1, phantom, d, scatter_type, scatter_factor));     
                 if do_fan2para
                     rotation_angle = scan_angles(1); % Assumes even spacing 
                     [P,~,paraRotAngles] = fan2para(sinogram, (dist_to_detector/2)/pixel_dims(1), ...
@@ -470,6 +533,11 @@ classdef gui < matlab.apps.AppBase
             app.PhantomListBox.Items{end + 1} = phantomName;
             app.PhantomListBox.ItemsData{end + 1} = loadedPhantom;
             app.phantom_files{end + 1} = fullPhantomPath;
+
+            % Select the newly loaded phantom.
+            app.PhantomListBox.Value = loadedPhantom;
+            app.UpdatePhantomPreview();
+
         end 
 
         % Callback function: LoadSourceMenu, SourceLoadButton
@@ -555,6 +623,8 @@ classdef gui < matlab.apps.AppBase
             app.PhantomListBox.Items = {"Modified Shepp Logan","Example 2","Example 3","Example 4"};
             app.PhantomListBox.ItemsData = {"Modified Shepp Logan","Example 2", "Example 3", "Example 4"};
             app.PhantomListBox.Value = "Modified Shepp Logan";
+            app.phantom_files = {'PhantomExample1.mat', 'PhantomExample2.mat', 'PhantomExample3.mat','PhantomExample4.mat'};
+            app.UpdatePhantomPreview();
 
             % Reset the edit fields
             app.VoxelSizeEditField.Value = 1;
@@ -637,6 +707,7 @@ classdef gui < matlab.apps.AppBase
             state.phantom_selected = app.PhantomListBox.Value;
             state.phantoms         = app.PhantomListBox.Items;
             state.phantom_data     = app.PhantomListBox.ItemsData;
+            state.phantom_files    = app.phantom_files;
             state.voxel_size       = app.VoxelSizeEditField.Value;
             state.voxel_units      = app.VoxelSizeUnits.Value;
 
@@ -711,6 +782,9 @@ classdef gui < matlab.apps.AppBase
             app.PhantomListBox.Value = state.phantom_selected;            
             app.VoxelSizeEditField.Value = state.voxel_size;
             app.VoxelSizeUnits.Value = state.voxel_units;
+            if isfield(state, "phantom_files") 
+                app.phantom_files = state.phantom_files;
+            end    
 
             % Set the gantry information
             app.DistToDetectorField.Value = state.dist_to_detector;
@@ -733,6 +807,7 @@ classdef gui < matlab.apps.AppBase
             app.ShowDropDownChanged(event);
             app.DetectorShapeDropDownValueChanged(event);
             app.SourceTypeDropDownValueChanged(event);
+            app.UpdatePhantomPreview();
         end
 
         % Menu selected function: ReconstructionHelpMenu
@@ -1278,6 +1353,7 @@ classdef gui < matlab.apps.AppBase
             app.PhantomListBox = uilistbox(app.PhantomPanel);
             app.PhantomListBox.Items = {'Modified Shepp Logan', 'Example 2', 'Example 3', 'Example 4'};
             app.PhantomListBox.ItemsData = {'Modified Shepp Logan', 'Example 2', 'Example 3', 'Example 4'};
+            app.PhantomListBox.ValueChangedFcn = createCallbackFcn(app, @PhantomListBoxValueChanged, true);
             app.PhantomListBox.Tooltip = {'Select the available phantoms'};
             app.PhantomListBox.Position = [95 51 158 74];
             app.PhantomListBox.Value = 'Modified Shepp Logan';
@@ -1741,6 +1817,7 @@ classdef gui < matlab.apps.AppBase
             app.ScatterFactorSpinner.ContextMenu = app.ScatterContextMenu;
 
             % Show the figure after all components are created
+            app.UpdatePhantomPreview();
             app.UIFigure.Visible = 'on';
         end
     end
