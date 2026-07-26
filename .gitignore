@@ -5,6 +5,13 @@
 *.slx.r*
 *.mdl.r*
 
+#Example binaries
+gui/PhantomExample*.mat
+gui/SourceExample*.mat
+
+# MATLAB Compiler output
+build/
+
 # Derived content-obscured files
 *.p
 
