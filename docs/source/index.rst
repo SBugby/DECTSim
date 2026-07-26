@@ -11,6 +11,7 @@ Welcome to DECTSim's documentation!
    :caption: User Guide:
    :glob: 
    
+   user_guide/first_run.md
    user_guide/gui.md
    user_guide/first_sim.md
 

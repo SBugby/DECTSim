@@ -941,15 +941,8 @@ classdef gui < matlab.apps.AppBase
                 message, ...
                 'About DECTSim', ...
                 'Icon', 'info');
-            end
         end
-
-
-        % Menu selected function: SourceHelpMenu_run
-        function SourceHelpMenu_runSelected(app, event)
-            web("https://dectsim.readthedocs.io/en/latest/user_guide/gui.html#source","-browser");
-        end
-          
+         
 
         % Menu selected function: PhantomHelpMenu_run
         function PhantomHelpMenu_runSelected(~, ~)
@@ -967,7 +960,7 @@ classdef gui < matlab.apps.AppBase
         end
 
         % Menu selected function: ReconstructionMenu_3, SinogramMenu_3
-        function OpeninImageViewerMenuSelected(app, event)
+        function OpeninImageViewerMenuSelected(~, ~)
 
             showSinogram = strcmp(event.Source.Text, "Sinogram");
 
