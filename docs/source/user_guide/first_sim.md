@@ -1,5 +1,9 @@
 # Running a script (No GUI)
 
+## Prerequisites
+In order to use the MATLAB `iradon` function the Image Processing Toolbox is required. 
+
+## Ingredients
 To run a simulation, there are 5 main ingredients required:
 1. The x-ray source, giving information about the energy and intensity of the x-rays at given positions. Currently, only `single_energy` and `source_fromfile` is available, but more will be added in the future.
 2. The phantom, which is the object being imaged. 
