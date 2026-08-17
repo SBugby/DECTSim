@@ -11,7 +11,7 @@ Purpose
 
 The ``save_phantom_preview`` function generates a transparent PNG preview of a voxel phantom.
 
-The function selects the central slice in the z direction and uses :func:`voxel_array.get_object_idxs` to determine which voxel object occupies each position in the slice. The resulting object indices are converted to grayscale values.
+The function selects the central slice in the z direction and uses :func:`voxel_array.get_object_idxs` to determine which voxel object occupies each position in the slice. The object indices are used to look up material attenuation coefficients at a reference energy of 50 keV (arbitrary). Foreground attenuation values are normalised to grayscale values between 0.15 and 0.85.
 
 Voxels whose object index is equal to :attr:`voxel_array.nobj` represent the world material and are made fully transparent. All voxels belonging to objects within the phantom are made fully opaque.
 
@@ -44,7 +44,7 @@ Functions
 
     The function constructs the voxel indices for the central x-y slice and passes them to :func:`voxel_array.get_object_idxs`. This returns the index of the voxel object occupying each position.
 
-    The object indices are reshaped into a two-dimensional image and normalised to grayscale. Positions containing the world material, identified by :attr:`voxel_array.nobj`, are assigned an alpha value of ``0`` and are therefore transparent in the saved PNG.
+    The object indices are reshaped into a two-dimensional image. Material attenuation coefficients at 50 keV are normalised to grayscale values in the range ``[0.15, 0.85]``. If all foreground voxels have the same attenuation coefficient, they are assigned a mid-grey value of ``0.5``. Positions containing the world material, identified by :attr:`voxel_array.nobj`, are assigned an alpha value of ``0`` and are therefore transparent in the saved PNG.
 
     :param phantom: The voxel array from which the preview is generated.
     :type phantom: :class:`voxel_array`
@@ -64,11 +64,10 @@ All of these properties are immutable, therefore they cannot be changed after th
     (:class:`function`) A function that takes a set of points ``(x, y, z)`` and returns a list of logical values indicating if the point is inside the object or not.
 
 .. attribute:: material
-    
+
     (:class:`material_attenuation`) The material of the object.
 
 .. attribute:: get_mu
     :noindex:
 
     (:class:`function`) A function that takes an energy and returns the linear attenuation coefficient of the material at that energy.
-

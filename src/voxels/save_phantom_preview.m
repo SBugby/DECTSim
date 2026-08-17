@@ -16,7 +16,6 @@ function [preview, alpha] = save_phantom_preview( ...
 
     % num_planes counts boundaries, so subtract one to get voxel cells.
     num_voxels = phantom.num_planes - 1;
-
     nx = num_voxels(1);
     ny = num_voxels(2);
     nz = num_voxels(3);
@@ -38,23 +37,22 @@ function [preview, alpha] = save_phantom_preview( ...
 
     % Convert vector back to a 2-D image.
     %
-    % Transpose because image rows represent y and columns represent x.
+    % reshape gives rows=x, columns=y; rot90 both swaps the axes (so rows=y,
+    % columns=x) and flips y so row 1 is the maximum y, matching image row
+    % order (row 1 at the top) rather than plain axis-swapping transpose.
     object_slice = reshape(object_indices, nx, ny);
     object_slice = rot90(object_slice, 1);
 
     % phantom.nobj is the world material, which is air by default.
     foreground = object_slice ~= phantom.nobj;
 
-    % Map each object index to its material attenuation coefficient (arbitrary energy)
-    reference_energy = 50;
-    mu_values = double(phantom.get_mu_arr(reference_energy));
-    attenuation_slice = reshape(mu_values(object_slice(:)), size(object_slice));
-
     preview = zeros(size(object_slice), "double");
 
     if any(foreground, "all")
-        foreground_values = ...
-            attenuation_slice(foreground);
+        % Map each object index to its material attenuation coefficient (arbitrary energy)
+        reference_energy = 50;
+        mu_values = double(phantom.get_mu_arr(reference_energy));
+        foreground_values = mu_values(object_slice(foreground));
 
         minimum_value = min(foreground_values);
         maximum_value = max(foreground_values);
@@ -64,11 +62,9 @@ function [preview, alpha] = save_phantom_preview( ...
         maximum_grey = 0.85;
 
         if maximum_value > minimum_value
-            preview(foreground) = ...
-                minimum_grey + ...
+            preview(foreground) = minimum_grey + ...
                 (maximum_grey - minimum_grey) .* ...
-                (attenuation_slice(foreground) - minimum_value) ./ ...
-                (maximum_value - minimum_value);
+                mat2gray(foreground_values, [minimum_value, maximum_value]);
         else
             preview(foreground) = (minimum_grey + maximum_grey) / 2;
         end
