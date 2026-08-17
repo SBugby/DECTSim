@@ -1035,7 +1035,7 @@ end
         end
 
         % Menu selected function: ReconstructionMenu_3, SinogramMenu_3
-        function OpeninImageViewerMenuSelected(~, ~)
+        function OpeninImageViewerMenuSelected(app, event)
 
             showSinogram = strcmp(event.Source.Text, "Sinogram");
 

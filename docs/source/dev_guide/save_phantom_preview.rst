@@ -1,10 +1,10 @@
 Save Phantom Preview
-=============
+====================
 
 This allows a preview image to be generated when you create a custom phantom. The preview image can then be displayed on the GUI when your phantom is selected.
 
 save_phantom_preview
-------------
+--------------------
 
 Purpose
 ~~~~~~~
@@ -25,6 +25,7 @@ Arguments
     (:class:`string`) The path at which the preview image is saved. The output image is written in PNG format.
 
 Returns
+~~~~~~~
 
 .. attribute:: preview
     (:class:`double`) A two-dimensional grayscale image containing the central axial slice of the phantom. The values are normalised to the range ``[0, 1]``.
@@ -70,5 +71,4 @@ All of these properties are immutable, therefore they cannot be changed after th
     :noindex:
 
     (:class:`function`) A function that takes an energy and returns the linear attenuation coefficient of the material at that energy.
-
 

@@ -71,14 +71,8 @@ function [preview, alpha] = save_phantom_preview( ...
                 (maximum_value - minimum_value);
         else
             preview(foreground) = (minimum_grey + maximum_grey) / 2;
+        end
     end
-end 
-
-
-
-
-
-
 
     % Fully transparent background, fully opaque phantom.
     alpha = double(foreground);
