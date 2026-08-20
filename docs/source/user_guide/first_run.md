@@ -19,7 +19,7 @@ The Windows application does not require a MATLAB licence. It cannot be used to 
 2. Open the latest release.
 3. Under **Assets**, download:
 
-   `DECTSim-Windows-v1.0.0.zip`
+   `DECTSim-Windows.zip`
 
 4. Do not download the file labelled **Source code**, as that contains
    the MATLAB source rather than the Windows application.
