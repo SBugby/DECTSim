@@ -53,21 +53,3 @@ Functions
 
     :returns: A grayscale preview image and its corresponding alpha channel.
     :rtype: tuple(:class:`double`, :class:`double`)
-
-
-Properties
-~~~~~~~~~~
-All of these properties are immutable, therefore they cannot be changed after the object is created.
-
-.. attribute:: is_in_object
-
-    (:class:`function`) A function that takes a set of points ``(x, y, z)`` and returns a list of logical values indicating if the point is inside the object or not.
-
-.. attribute:: material
-
-    (:class:`material_attenuation`) The material of the object.
-
-.. attribute:: get_mu
-    :noindex:
-
-    (:class:`function`) A function that takes an energy and returns the linear attenuation coefficient of the material at that energy.
