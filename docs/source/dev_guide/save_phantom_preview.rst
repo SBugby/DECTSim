@@ -38,7 +38,7 @@ Functions
 
 .. function:: save_phantom_preview(phantom, output_file)
 
-    Generates and saves a transparent preview image from the central axial slice of a voxel phantom.
+    Generates and saves a preview image to ``output_file`` from the central axial slice of a voxel ``phantom``.
 
     The number of voxels in each dimension is calculated from :attr:`voxel_array.num_planes`. Because ``num_planes`` contains the voxel boundary planes, the number of voxel cells is given by ``num_planes - 1``.
 
